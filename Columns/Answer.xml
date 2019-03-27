@@ -1,0 +1,15 @@
+<Field 
+	ID="{b3db88d9-ae9f-4447-baac-4f47cce6339d}" 
+	Name="Answer" 
+	StaticName="Answer" 
+	DisplayName="Answer" 
+	Type="Note" 
+	NumLines="15" 
+	RichText="TRUE" 
+	RichTextMode="FullHtml" 
+	IsolateStyles="TRUE" 
+	Required="FALSE" 
+	EnforceUniqueValues="FALSE" 
+	Indexed="FALSE" 
+	Sortable="FALSE" 
+/>

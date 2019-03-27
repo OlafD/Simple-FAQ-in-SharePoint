@@ -1,0 +1,17 @@
+<Field 
+	ID="{aff5d4cd-e5df-4ddf-996a-98948ca919a5}" 
+	Name="ContentLanguage" 
+	StaticName="ContentLanguage" 
+	DisplayName="Language" 
+	Type="Choice" 
+	Format="Dropdown" 
+	FillInChoice="FALSE" 
+	Required="FALSE" 
+	EnforceUniqueValues="FALSE" 
+	Indexed="FALSE">
+	<Default>DE</Default>
+	<CHOICES>
+		<CHOICE>DE</CHOICE>
+		<CHOICE>EN</CHOICE>
+	</CHOICES>
+</Field>

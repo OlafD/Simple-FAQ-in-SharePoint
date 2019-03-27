@@ -1,0 +1,153 @@
+
+<style>
+
+.accordion {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .accordion:hover {
+  background-color: #ccc;
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  display: none;
+  overflow: hidden;
+}
+
+#FAQ {
+	width: 70%;
+}
+
+#FAQlist {
+	list-style: none;
+	padding: 0;
+}
+
+</style>
+
+<div id="FAQ">
+	<ul id="FAQlist">
+	</ul>
+</div>
+
+
+<script type="text/javascript">
+
+SP.SOD.executeFunc("sp.js", "SP.ClientContext", function () {
+	console.log("call loadPageData()");
+
+	loadPageData();
+});
+
+function loadPageData() {
+	var language = "EN";
+	
+	if (_spPageContextInfo.currentLanguage == 1031) {
+		language = "DE";
+	}
+	
+	console.log("language in query will be " + language);
+	
+	var promise = loadListItems(language);
+	
+	promise.done(function(items) {
+		if (items.get_count() > 0) {
+			var enumerator = items.getEnumerator();
+			while (enumerator.moveNext()) {
+				var item = enumerator.get_current();
+				
+				var question = item.get_item("Title");
+				var answer = item.get_item("Answer");
+				
+				var htmlBlock = 
+					"<li class='accordion'>" + question + "</li>" +
+					"<div class='panel'><p>" + answer + "</p></div>" +
+					"<br />";
+					
+				$("#FAQlist").append(htmlBlock);
+			}
+			
+			attachScript();
+		}
+	});
+}
+
+function loadListItems(language) {
+    var deferredObject = $.Deferred();
+
+    var ctx = new SP.ClientContext.get_current();
+
+    var queryXml = 
+        "<View>" +
+            "<Query>" +
+                "<Where>" +
+                    "<Eq>" +
+                        "<FieldRef Name='ContentLanguage' />" +
+                        "<Value Type='Text'>" + language + "</Value>" +
+                    "</Eq>" +
+                "</Where>" +
+            "</Query>" +
+        "</View>";
+
+    var oList = ctx.get_web().get_lists().getByTitle("FAQ");
+    var query = new SP.CamlQuery();
+    query.set_viewXml(queryXml);
+    var oItems = oList.getItems(query);
+
+    ctx.load(oItems);
+    ctx.executeQueryAsync(
+        function () {
+            console.log("executeQueryAsync in loadListItems() successful");
+
+			deferredObject.resolve(oItems);
+        },
+        function (sender, args) {
+            console.log("executeQueryAsync in loadListItems() failed");
+            console.log(args.get_message());
+            console.log(args.get_stackTrace());
+            deferredObject.reject();
+        }
+    );
+
+    return deferredObject.promise();
+}
+
+function attachScript() {
+	var acc = document.getElementsByClassName("accordion");
+	var i;
+
+	for (i = 0; i < acc.length; i++) {
+		acc[i].addEventListener("click", questionToggler);
+	} 
+}
+
+function questionToggler() {
+	/* Toggle between adding and removing the "active" class,
+	to highlight the button that controls the panel */
+	this.classList.toggle("active");
+
+	/* Toggle between hiding and showing the active panel */
+	var panel = this.nextElementSibling;
+	if (panel.style.display === "block") {
+	  panel.style.display = "none";
+	} else {
+	  panel.style.display = "block";
+	}
+
+	return false;
+}
+
+</script>
+
